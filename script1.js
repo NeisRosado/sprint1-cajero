@@ -23,11 +23,11 @@ let userslist = [
 
 const moneyinBox = [
   {
-    denomination: 5000,
+    denomination: 100000,
     cant: 0,
   },
   {
-    denomination: 10000,
+    denomination: 50000,
     cant: 0,
   },
   {
@@ -36,17 +36,17 @@ const moneyinBox = [
   },
 
   {
-    denomination: 50000,
+    denomination: 10000,
     cant: 0,
   },
 
   {
-    denomination: 100000,
+    denomination: 5000,
     cant: 0,
   },
 ];
 
-let totalEnCaja = 0;
+let totalinBox = 0;
 
 const starCash = () => {
   const userDoc = prompt("Digite su Número de Documento");
@@ -66,7 +66,7 @@ const userCheck = () => {
   );
 
   while (!userSearch) {
-    alert("Usuario no encontrado: por favor verifique sus datos ");
+    alert("Usuario no Encontrado: Verifique sus Datos ");
     userLogin = starCash();
     userSearch = userslist.find(
       (user) =>
@@ -89,23 +89,61 @@ const deposity = () => {
     const sumDenomination = moneyBill.denomination * moneyBill.cant;
     totalMoney += sumDenomination;
     console.log(
-      ` denominación: ${moneyBill.denomination} cantidad: ${moneyBill.cant} total: ${sumDenomination}`
+      `Billete de: ${moneyBill.denomination} Cant: ${moneyBill.cant} Total: ${sumDenomination}`
     );
   });
   console.log("Total Disponible en Caja ", totalMoney);
-  totalEnCaja += totalMoney;
+  totalinBox += totalMoney;
 };
 
 const withdrawals = () => {
-  let  cantRetirar;
-  let disponible = 0; 
-  alert ("Retirar Dinero")
-  cantRetirar = prompt("Ingrese Cantidad a Retirar");
-//Hasta aquí llegué
-}; 
+  alert("Proceso de Retiro");
+  let total = 0;
+  const amounttoWithdraw = prompt("Ingrese Cantidad a Retirar");
+  const moneywithdrawal = Number(amounttoWithdraw);
+  if (moneywithdrawal > totalinBox) {
+    alert("Cajero en Mantenimiento, Regrese pronto");
+  }
+  if (moneywithdrawal <= totalinBox) {
+    const arrayMoney = [];
+    let moneyDelivery = moneywithdrawal;
+    moneyinBox.forEach((element) => {
+      const moneyNeed = Math.floor(moneyDelivery / element.denomination);
+      if (moneyNeed > 0) {
+        if (moneyNeed <= element.cant) {
+          const bills = {
+            denomination: element.denomination,
+            amount: moneyNeed,
+          };
 
+          arrayMoney.push(bills);
+          element.cant -= moneyNeed;
+          moneyDelivery -= element.denomination * moneyNeed;
 
+          console.log(
+            `Disponible: ${moneyNeed} Billetes de: ${element.denomination}`
+          );
+        } else {
+          const bills = {
+            denomination: element.denomination,
+            amount: element.cant,
+          };
+          arrayMoney.push(bills);
+          moneyDelivery -= element.denomination * bills.cant;
+          element.cant = element.cant;
+          console.log(`No Retirado, Sencillo no Disponible`);
+        }
+      }
+    });
+    moneyinBox.forEach((rest) => {
+      const balance = rest.denomination * rest.cant;
+      total += balance;
 
+      console.log(`Saldo Restante: ${rest.denomination} cant: ${rest.cant}`);
+    });
+  }
+  console.log("Total Disponible en Caja ", parseInt (total));
+};
 
 const transaction = () => {
   while (true) {
@@ -119,5 +157,4 @@ const transaction = () => {
     }
   }
 };
-
 transaction();
